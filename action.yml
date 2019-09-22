@@ -9,5 +9,5 @@ inputs:
         description: "ms"
         default: 100
 runs:
-    using: "node10"
+    using: "node12"
     main: "lib/main.js"
