@@ -662,15 +662,6 @@ module.exports = require("child_process");
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -682,18 +673,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const wait_1 = __webpack_require__(81);
 const exec_1 = __webpack_require__(986);
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const ms = core.getInput("milliseconds");
-        console.log(`Waiting ${ms} milliseconds ...`);
-        core.debug(new Date().toTimeString());
-        yield wait_1.wait(parseInt(ms));
-        core.debug(new Date().toTimeString());
-        console.log("Installing and running tests");
-        yield exec_1.exec("npm ci");
-        yield exec_1.exec("npm test");
-        core.setOutput("time", new Date().toTimeString());
-    });
+async function run() {
+    const ms = core.getInput("milliseconds");
+    console.log(`Waiting ${ms} milliseconds ...`);
+    core.debug(new Date().toTimeString());
+    await wait_1.wait(parseInt(ms));
+    core.debug(new Date().toTimeString());
+    console.log("Installing and running tests");
+    await exec_1.exec("npm ci");
+    await exec_1.exec("npm test");
+    core.setOutput("time", new Date().toTimeString());
 }
 run().catch(error => {
     console.log("Action failed", error);
