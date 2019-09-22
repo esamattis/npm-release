@@ -9,6 +9,8 @@ async function run() {
     await wait(parseInt(ms));
     core.debug(new Date().toTimeString());
 
+    console.log("Logging stuff?");
+
     core.setOutput("time", new Date().toTimeString());
 }
 
