@@ -1,13 +1,10 @@
 import { promises as fs } from "fs";
 import semver from "semver";
 import * as core from "@actions/core";
-import { wait } from "./wait";
 import { exec } from "@actions/exec";
 import { execSync } from "child_process";
 
 async function run() {
-    const ms = core.getInput("milliseconds");
-
     const packageFile = __dirname + "/../package.json";
     const pkg = JSON.parse((await fs.readFile(packageFile)).toString());
 
