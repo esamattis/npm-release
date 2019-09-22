@@ -60,7 +60,15 @@ npx np --no-publish
 
 [np]: https://github.com/sindresorhus/np
 
-## Running tests
+## Examples
 
-If you want to run tests before the release you can add a step for it or just
-put `npm test` to the `prepublishOnly` script in `package.json`.
+react-bemed
+
+- https://github.com/epeli/react-bemed/tree/master/.github/workflows
+- https://www.npmjs.com/package/react-bemed
+  - Checkout the "Versions" tab
+
+## Running tests and building
+
+If you need to run build and/or tests before the release you can add a workflow step for it or just
+add it to the `prepublishOnly` script in `package.json`.
