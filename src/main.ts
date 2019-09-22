@@ -1,20 +1,35 @@
+import { promises as fs } from "fs";
+import semver from "semver";
 import * as core from "@actions/core";
 import { wait } from "./wait";
 import { exec } from "@actions/exec";
+import { execSync } from "child_process";
 
 async function run() {
     const ms = core.getInput("milliseconds");
-    console.log(`Waiting ${ms} milliseconds ...`);
 
-    core.debug(new Date().toTimeString());
-    await wait(parseInt(ms));
-    core.debug(new Date().toTimeString());
+    const packageFile = __dirname + "/../package.json";
+    const pkg = JSON.parse((await fs.readFile(packageFile)).toString());
 
-    console.log("Installing and running tests");
+    const gitRev = execSync("git rev-parse HEAD")
+        .toString()
+        .slice(0, 8);
+
+    if (pkg.version.includes("-dev.")) {
+        console.log("Prerelease version already set");
+        process.exit(1);
+    }
+
+    pkg.version = `${semver.inc(
+        pkg.version,
+        "patch",
+    )}-dev.${Date.now()}.${gitRev}`;
+
+    await fs.writeFile(packageFile, JSON.stringify(pkg, null, "    "));
+    console.log(pkg.version);
 
     await exec("npm ci");
     await exec("npm test");
-
     core.setOutput("time", new Date().toTimeString());
 }
 
