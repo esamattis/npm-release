@@ -5,7 +5,7 @@ import { exec } from "@actions/exec";
 import { execSync } from "child_process";
 
 async function run() {
-    const packageFile = __dirname + "/../package.json";
+    const packageFile = "./package.json";
     const pkg = JSON.parse((await fs.readFile(packageFile)).toString());
 
     const gitRev = execSync("git rev-parse HEAD")
