@@ -19,7 +19,7 @@
         "node",
         "setup"
     ],
-    "author": "YourNameOrOrganization",
+    "author": "Esa-Matti Suuronen",
     "license": "MIT",
     "dependencies": {
         "@actions/core": "^1.1.1",
