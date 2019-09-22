@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -eu
+
+npm run commit-build
+
+np --no-publish
+
+git tag v1 HEAD --force
+
+git push origin :v1
+git push origin --tags
