@@ -1,6 +1,6 @@
 {
     "name": "prerelease-action",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "private": true,
     "description": "JavaScript template action",
     "main": "dist/index.js",
