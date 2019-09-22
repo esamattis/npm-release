@@ -5,6 +5,27 @@ import { exec } from "@actions/exec";
 import { execSync } from "child_process";
 
 async function run() {
+    const tag = core.getInput("tag");
+    const type = core.getInput("type");
+
+    if (!["stable", "prerelease"].includes(type)) {
+        core.setFailed("unknown release type " + type);
+        return;
+    }
+
+    const npmToken = core.getInput("token");
+
+    if (!npmToken) {
+        core.setFailed("NPM_TOKEN input not set");
+        return;
+    }
+
+    await exec(
+        `echo "//registry.npmjs.org/:_authToken=${npmToken}" > $HOME/.npmrc`,
+    );
+
+    await exec("npm whoami");
+
     const packageFile = "./package.json";
     const pkg = JSON.parse((await fs.readFile(packageFile)).toString());
 
