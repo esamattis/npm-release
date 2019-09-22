@@ -1,10 +1,13 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: "Make prerelease"
+description: "Makes prereleases on git push to npm"
+author: "Esa-Matti Suuronen"
 inputs:
-  myInput:              # change this
-    description: 'input description here'
-    default: 'default value if applicable'
+    NPM_TOKEN:
+        description: "npm publish token"
+        required: true
+    milliseconds:
+        description: "ms"
+        default: 100
 runs:
-  using: 'node12'
-  main: 'lib/main.js'
+    using: "node10"
+    main: "lib/main.js"
