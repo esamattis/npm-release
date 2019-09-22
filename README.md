@@ -59,3 +59,8 @@ npx np --no-publish
 ```
 
 [np]: https://github.com/sindresorhus/np
+
+## Running tests
+
+If you want to run tests before the release you can add a step for it or just
+put `npm test` to the `prepublishOnly` script in `package.json`.
