@@ -30,7 +30,7 @@ async function setPrereleaseVersion() {
 async function run() {
     const tag = core.getInput("tag") || "next";
 
-    if (/[a-z]+/.test(tag)) {
+    if (!/[a-z]+/.test(tag)) {
         core.setFailed(`Invalid tag format "${tag}". Only a-z characters.`);
         return;
     }
