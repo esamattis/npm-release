@@ -16,7 +16,10 @@ async function setPrereleaseVersion() {
         process.exit(1);
     }
 
-    pkg.version = `${semver.inc(pkg.version, "patch")}-dev.${gitRev}`;
+    pkg.version = `${semver.inc(pkg.version, "patch")}-dev.${gitRev.slice(
+        0,
+        9,
+    )}`;
 
     await fs.writeFile(packageFile, JSON.stringify(pkg, null, "    "));
     console.log("Prerelease version: " + pkg.version);
