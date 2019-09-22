@@ -24,9 +24,8 @@ jobs:
 ```
 
 This bumbs the patch version and makes new release with a `next` tag. The
-versions will look like `1.0.1-dev.1569071429959.8e428fd7` where is
-`1569071429959` is the publish timestamp and `8e428fd7` is the git rev of the
-release.
+versions will look like `1.0.1-dev.5726e5ec69211237ea73da917a01bd8a2e5f8a22`
+where is the suffix is the git revision the release was made from.
 
 ## Stable release
 

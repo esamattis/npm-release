@@ -5,23 +5,18 @@ import * as core from "@actions/core";
 import { exec } from "@actions/exec";
 import { execSync } from "child_process";
 
+const gitRev = execSync("git rev-parse HEAD").toString();
+
 async function setPrereleaseVersion() {
     const packageFile = "./package.json";
     const pkg = JSON.parse((await fs.readFile(packageFile)).toString());
-
-    const gitRev = execSync("git rev-parse HEAD")
-        .toString()
-        .slice(0, 8);
 
     if (pkg.version.includes("-dev.")) {
         console.log("Prerelease version already set");
         process.exit(1);
     }
 
-    pkg.version = `${semver.inc(
-        pkg.version,
-        "patch",
-    )}-dev.${Date.now()}.${gitRev}`;
+    pkg.version = `${semver.inc(pkg.version, "patch")}-dev.${gitRev}`;
 
     await fs.writeFile(packageFile, JSON.stringify(pkg, null, "    "));
     console.log("Prerelease version: " + pkg.version);
