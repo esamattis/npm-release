@@ -655,6 +655,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __webpack_require__(747);
+const path_1 = __importDefault(__webpack_require__(622));
 const semver_1 = __importDefault(__webpack_require__(280));
 const core = __importStar(__webpack_require__(470));
 const exec_1 = __webpack_require__(986);
@@ -671,7 +672,7 @@ async function run() {
         core.setFailed("NPM_TOKEN input not set");
         return;
     }
-    await fs_1.promises.writeFile(".npmrc", npmToken);
+    await fs_1.promises.writeFile(path_1.default.join(process.env.HOME || "~", ".npmrc"), `//registry.npmjs.org/:_authToken=${npmToken}`);
     await exec_1.exec("npm whoami");
     const packageFile = "./package.json";
     const pkg = JSON.parse((await fs_1.promises.readFile(packageFile)).toString());
