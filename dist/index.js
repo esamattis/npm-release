@@ -660,19 +660,23 @@ const semver_1 = __importDefault(__webpack_require__(280));
 const core = __importStar(__webpack_require__(470));
 const exec_1 = __webpack_require__(986);
 const child_process_1 = __webpack_require__(129);
+const gitRev = child_process_1.execSync("git rev-parse HEAD").toString();
 async function setPrereleaseVersion() {
     const packageFile = "./package.json";
     const pkg = JSON.parse((await fs_1.promises.readFile(packageFile)).toString());
-    const gitRev = child_process_1.execSync("git rev-parse HEAD")
-        .toString()
-        .slice(0, 8);
     if (pkg.version.includes("-dev.")) {
         console.log("Prerelease version already set");
         process.exit(1);
     }
-    pkg.version = `${semver_1.default.inc(pkg.version, "patch")}-dev.${Date.now()}.${gitRev}`;
+    pkg.version = `${semver_1.default.inc(pkg.version, "patch")}-dev.${gitRev}`;
     await fs_1.promises.writeFile(packageFile, JSON.stringify(pkg, null, "    "));
     console.log("Prerelease version: " + pkg.version);
+}
+async function isDir(path) {
+    return fs_1.promises.stat(path).then(s => s.isDirectory(), () => false);
+}
+async function isFile(path) {
+    return fs_1.promises.stat(path).then(s => s.isFile(), () => false);
 }
 async function run() {
     const tag = core.getInput("tag") || "next";
@@ -692,7 +696,16 @@ async function run() {
     }
     await fs_1.promises.writeFile(path_1.default.join(process.env.HOME || "~", ".npmrc"), `//registry.npmjs.org/:_authToken=${npmToken}`);
     await exec_1.exec("npm whoami");
-    await exec_1.exec("npm ci");
+    /* check if the deps where installed in a previous step */
+    const isInstalled = await isDir("node_modules");
+    if (!isInstalled) {
+        if (await isFile("package-lock.json")) {
+            await exec_1.exec("npm ci");
+        }
+        else {
+            await exec_1.exec("npm install");
+        }
+    }
     if (type === "prerelease") {
         await setPrereleaseVersion();
         await exec_1.exec(`npm publish --tag ${tag}`);
