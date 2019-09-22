@@ -10,7 +10,7 @@ async function run() {
     await wait(parseInt(ms));
     core.debug(new Date().toTimeString());
 
-    console.log("Logging stuff?");
+    console.log("Installing and running tests");
 
     await exec("npm ci");
     await exec("npm test");
