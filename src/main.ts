@@ -1,5 +1,6 @@
 import * as core from "@actions/core";
 import { wait } from "./wait";
+import { exec } from "@actions/exec";
 
 async function run() {
     const ms = core.getInput("milliseconds");
@@ -10,6 +11,9 @@ async function run() {
     core.debug(new Date().toTimeString());
 
     console.log("Logging stuff?");
+
+    await exec("npm ci");
+    await exec("npm test");
 
     core.setOutput("time", new Date().toTimeString());
 }
