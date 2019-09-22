@@ -1,4 +1,5 @@
 import { promises as fs } from "fs";
+import PathUtils from "path";
 import semver from "semver";
 import * as core from "@actions/core";
 import { exec } from "@actions/exec";
@@ -20,7 +21,10 @@ async function run() {
         return;
     }
 
-    await fs.writeFile(".npmrc", npmToken);
+    await fs.writeFile(
+        PathUtils.join(process.env.HOME || "~", ".npmrc"),
+        `//registry.npmjs.org/:_authToken=${npmToken}`,
+    );
 
     await exec("npm whoami");
 
