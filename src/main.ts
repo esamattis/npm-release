@@ -20,9 +20,7 @@ async function run() {
         return;
     }
 
-    await exec(
-        `echo "//registry.npmjs.org/:_authToken=${npmToken}" > $HOME/.npmrc`,
-    );
+    await fs.writeFile(".npmrc", npmToken);
 
     await exec("npm whoami");
 
