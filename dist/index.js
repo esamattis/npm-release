@@ -671,7 +671,7 @@ async function run() {
         core.setFailed("NPM_TOKEN input not set");
         return;
     }
-    await exec_1.exec(`echo "//registry.npmjs.org/:_authToken=${npmToken}" > $HOME/.npmrc`);
+    await fs_1.promises.writeFile(".npmrc", npmToken);
     await exec_1.exec("npm whoami");
     const packageFile = "./package.json";
     const pkg = JSON.parse((await fs_1.promises.readFile(packageFile)).toString());
