@@ -660,8 +660,8 @@ const core = __importStar(__webpack_require__(470));
 const exec_1 = __webpack_require__(986);
 const child_process_1 = __webpack_require__(129);
 async function run() {
-    const packageFile = __webpack_require__.ab + "package.json";
-    const pkg = JSON.parse((await fs_1.promises.readFile(__webpack_require__.ab + "package.json")).toString());
+    const packageFile = "./package.json";
+    const pkg = JSON.parse((await fs_1.promises.readFile(packageFile)).toString());
     const gitRev = child_process_1.execSync("git rev-parse HEAD")
         .toString()
         .slice(0, 8);
@@ -670,7 +670,7 @@ async function run() {
         process.exit(1);
     }
     pkg.version = `${semver_1.default.inc(pkg.version, "patch")}-dev.${Date.now()}.${gitRev}`;
-    await fs_1.promises.writeFile(__webpack_require__.ab + "package.json", JSON.stringify(pkg, null, "    "));
+    await fs_1.promises.writeFile(packageFile, JSON.stringify(pkg, null, "    "));
     console.log("Prerelease version: " + pkg.version);
     await exec_1.exec("npm ci");
     await exec_1.exec("npm test");
