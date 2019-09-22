@@ -75,10 +75,11 @@ module.exports = require("os");
 "use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -99,6 +100,7 @@ function run() {
         core.debug(new Date().toTimeString());
         yield wait_1.wait(parseInt(ms));
         core.debug(new Date().toTimeString());
+        console.log("Logging stuff?");
         core.setOutput("time", new Date().toTimeString());
     });
 }
@@ -125,18 +127,18 @@ const os = __webpack_require__(87);
  *
  * Examples:
  *   ##[warning]This is the user warning message
- *   ##[set-secret name=mypassword]definatelyNotAPassword!
+ *   ##[set-secret name=mypassword]definitelyNotAPassword!
  */
 function issueCommand(command, properties, message) {
     const cmd = new Command(command, properties, message);
     process.stdout.write(cmd.toString() + os.EOL);
 }
 exports.issueCommand = issueCommand;
-function issue(name, message) {
+function issue(name, message = '') {
     issueCommand(name, {}, message);
 }
 exports.issue = issue;
-const CMD_PREFIX = '##[';
+const CMD_STRING = '::';
 class Command {
     constructor(command, properties, message) {
         if (!command) {
@@ -147,7 +149,7 @@ class Command {
         this.message = message;
     }
     toString() {
-        let cmdStr = CMD_PREFIX + this.command;
+        let cmdStr = CMD_STRING + this.command;
         if (this.properties && Object.keys(this.properties).length > 0) {
             cmdStr += ' ';
             for (const key in this.properties) {
@@ -156,12 +158,12 @@ class Command {
                     if (val) {
                         // safely append the val - avoid blowing up when attempting to
                         // call .replace() if message is not a string for some reason
-                        cmdStr += `${key}=${escape(`${val || ''}`)};`;
+                        cmdStr += `${key}=${escape(`${val || ''}`)},`;
                     }
                 }
             }
         }
-        cmdStr += ']';
+        cmdStr += CMD_STRING;
         // safely append the message - avoid blowing up when attempting to
         // call .replace() if message is not a string for some reason
         const message = `${this.message || ''}`;
@@ -188,8 +190,18 @@ function escape(s) {
 
 "use strict";
 
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = __webpack_require__(431);
+const os = __webpack_require__(87);
 const path = __webpack_require__(622);
 /**
  * The code to exit an action
@@ -225,7 +237,10 @@ exports.exportVariable = exportVariable;
  */
 function exportSecret(name, val) {
     exportVariable(name, val);
+    // the runner will error with not implemented
+    // leaving the function but raising the error earlier
     command_1.issueCommand('set-secret', {}, val);
+    throw new Error('Not implemented.');
 }
 exports.exportSecret = exportSecret;
 /**
@@ -245,7 +260,7 @@ exports.addPath = addPath;
  * @returns   string
  */
 function getInput(name, options) {
-    const val = process.env[`INPUT_${name.replace(' ', '_').toUpperCase()}`] || '';
+    const val = process.env[`INPUT_${name.replace(/ /g, '_').toUpperCase()}`] || '';
     if (options && options.required && !val) {
         throw new Error(`Input required and not supplied: ${name}`);
     }
@@ -302,6 +317,54 @@ function warning(message) {
     command_1.issue('warning', message);
 }
 exports.warning = warning;
+/**
+ * Writes info to log with console.log.
+ * @param message info message
+ */
+function info(message) {
+    process.stdout.write(message + os.EOL);
+}
+exports.info = info;
+/**
+ * Begin an output group.
+ *
+ * Output until the next `groupEnd` will be foldable in this group
+ *
+ * @param name The name of the output group
+ */
+function startGroup(name) {
+    command_1.issue('group', name);
+}
+exports.startGroup = startGroup;
+/**
+ * End an output group.
+ */
+function endGroup() {
+    command_1.issue('endgroup');
+}
+exports.endGroup = endGroup;
+/**
+ * Wrap an asynchronous function call in a group.
+ *
+ * Returns the same type as the function itself.
+ *
+ * @param name The name of the group
+ * @param fn The function to wrap in the group
+ */
+function group(name, fn) {
+    return __awaiter(this, void 0, void 0, function* () {
+        startGroup(name);
+        let result;
+        try {
+            result = yield fn();
+        }
+        finally {
+            endGroup();
+        }
+        return result;
+    });
+}
+exports.group = group;
 //# sourceMappingURL=core.js.map
 
 /***/ }),
