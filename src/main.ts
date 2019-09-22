@@ -27,6 +27,14 @@ async function setPrereleaseVersion() {
     console.log("Prerelease version: " + pkg.version);
 }
 
+async function isDir(path: string): Promise<boolean> {
+    return fs.stat(path).then(s => s.isDirectory(), () => false);
+}
+
+async function isFile(path: string): Promise<boolean> {
+    return fs.stat(path).then(s => s.isFile(), () => false);
+}
+
 async function run() {
     const tag = core.getInput("tag") || "next";
 
@@ -58,7 +66,16 @@ async function run() {
 
     await exec("npm whoami");
 
-    await exec("npm ci");
+    /* check if the deps where installed in a previous step */
+    const isInstalled = await isDir("node_modules");
+
+    if (!isInstalled) {
+        if (await isFile("package-lock.json")) {
+            await exec("npm ci");
+        } else {
+            await exec("npm install");
+        }
+    }
 
     if (type === "prerelease") {
         await setPrereleaseVersion();
