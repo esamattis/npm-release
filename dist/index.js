@@ -660,6 +660,19 @@ const core = __importStar(__webpack_require__(470));
 const exec_1 = __webpack_require__(986);
 const child_process_1 = __webpack_require__(129);
 async function run() {
+    const tag = core.getInput("tag");
+    const type = core.getInput("type");
+    if (!["stable", "prerelease"].includes(type)) {
+        core.setFailed("unknown release type " + type);
+        return;
+    }
+    const npmToken = core.getInput("token");
+    if (!npmToken) {
+        core.setFailed("NPM_TOKEN input not set");
+        return;
+    }
+    await exec_1.exec(`echo "//registry.npmjs.org/:_authToken=${npmToken}" > $HOME/.npmrc`);
+    await exec_1.exec("npm whoami");
     const packageFile = "./package.json";
     const pkg = JSON.parse((await fs_1.promises.readFile(packageFile)).toString());
     const gitRev = child_process_1.execSync("git rev-parse HEAD")
