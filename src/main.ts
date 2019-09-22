@@ -26,7 +26,7 @@ async function run() {
     )}-dev.${Date.now()}.${gitRev}`;
 
     await fs.writeFile(packageFile, JSON.stringify(pkg, null, "    "));
-    console.log(pkg.version);
+    console.log("Prerelease version: " + pkg.version);
 
     await exec("npm ci");
     await exec("npm test");
