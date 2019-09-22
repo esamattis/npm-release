@@ -660,20 +660,7 @@ const semver_1 = __importDefault(__webpack_require__(280));
 const core = __importStar(__webpack_require__(470));
 const exec_1 = __webpack_require__(986);
 const child_process_1 = __webpack_require__(129);
-async function run() {
-    const tag = core.getInput("tag");
-    const type = core.getInput("type");
-    if (!["stable", "prerelease"].includes(type)) {
-        core.setFailed("unknown release type " + type);
-        return;
-    }
-    const npmToken = core.getInput("token");
-    if (!npmToken) {
-        core.setFailed("NPM_TOKEN input not set");
-        return;
-    }
-    await fs_1.promises.writeFile(path_1.default.join(process.env.HOME || "~", ".npmrc"), `//registry.npmjs.org/:_authToken=${npmToken}`);
-    await exec_1.exec("npm whoami");
+async function setPrereleaseVersion() {
     const packageFile = "./package.json";
     const pkg = JSON.parse((await fs_1.promises.readFile(packageFile)).toString());
     const gitRev = child_process_1.execSync("git rev-parse HEAD")
@@ -686,9 +673,33 @@ async function run() {
     pkg.version = `${semver_1.default.inc(pkg.version, "patch")}-dev.${Date.now()}.${gitRev}`;
     await fs_1.promises.writeFile(packageFile, JSON.stringify(pkg, null, "    "));
     console.log("Prerelease version: " + pkg.version);
+}
+async function run() {
+    const tag = core.getInput("tag") || "next";
+    if (/[a-z]+/.test(tag)) {
+        core.setFailed(`Invalid tag format "${tag}". Only a-z characters.`);
+        return;
+    }
+    const type = core.getInput("type");
+    if (!["stable", "prerelease"].includes(type)) {
+        core.setFailed("You must set the 'type' input to 'stable' or 'prerelease'");
+        return;
+    }
+    const npmToken = core.getInput("token");
+    if (!npmToken) {
+        core.setFailed("'token' input not set");
+        return;
+    }
+    await fs_1.promises.writeFile(path_1.default.join(process.env.HOME || "~", ".npmrc"), `//registry.npmjs.org/:_authToken=${npmToken}`);
+    await exec_1.exec("npm whoami");
     await exec_1.exec("npm ci");
-    await exec_1.exec("npm test");
-    core.setOutput("time", new Date().toTimeString());
+    if (type === "prerelease") {
+        await setPrereleaseVersion();
+        await exec_1.exec(`npm publish --tag ${tag}`);
+    }
+    else {
+        await exec_1.exec("npm publish");
+    }
 }
 run().catch(error => {
     console.log("Action failed", error);
