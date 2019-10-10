@@ -679,6 +679,10 @@ async function isFile(path) {
     return fs_1.promises.stat(path).then(s => s.isFile(), () => false);
 }
 async function run() {
+    const dir = core.getInput("dir");
+    if (dir) {
+        process.chdir(dir);
+    }
     const tag = core.getInput("tag") || "next";
     if (!/[a-z]+/.test(tag)) {
         core.setFailed(`Invalid tag format "${tag}". Only a-z characters.`);
