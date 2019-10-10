@@ -34,6 +34,11 @@ async function isFile(path: string): Promise<boolean> {
 }
 
 async function run() {
+    const dir = core.getInput("dir");
+    if (dir) {
+        process.chdir(dir);
+    }
+
     const tag = core.getInput("tag") || "next";
 
     if (!/[a-z]+/.test(tag)) {

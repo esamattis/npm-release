@@ -12,6 +12,9 @@ inputs:
         description: "The release tag to use when doing prerelease"
         default: "next"
         required: false
+    dir:
+        description: "Custom package directory in a monorepo"
+        required: false
 runs:
     using: "node12"
     main: "dist/index.js"
