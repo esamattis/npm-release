@@ -29,6 +29,7 @@ async function exportReleaseVersion() {
     const packageFile = "./package.json";
     const pkg = JSON.parse((await fs.readFile(packageFile)).toString());
     core.exportVariable("NPM_RELEASE_VERSION", pkg.version);
+    core.exportVariable("NPM_PACKAGE_NAME", pkg.version);
 }
 
 async function isDir(path: string): Promise<boolean> {
