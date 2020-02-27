@@ -672,6 +672,11 @@ async function setPrereleaseVersion() {
     await fs_1.promises.writeFile(packageFile, JSON.stringify(pkg, null, "    "));
     console.log("Prerelease version: " + pkg.version);
 }
+async function exportReleaseVersion() {
+    const packageFile = "./package.json";
+    const pkg = JSON.parse((await fs_1.promises.readFile(packageFile)).toString());
+    core.exportVariable("NPM_RELEASE_VERSION", pkg.version);
+}
 async function isDir(path) {
     return fs_1.promises.stat(path).then(s => s.isDirectory(), () => false);
 }
@@ -717,6 +722,7 @@ async function run() {
     else {
         await exec_1.exec("npm publish");
     }
+    await exportReleaseVersion();
 }
 run().catch(error => {
     console.log("Action failed", error);
