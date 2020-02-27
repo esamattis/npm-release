@@ -675,8 +675,8 @@ async function setPrereleaseVersion() {
 async function exportReleaseVersion() {
     const packageFile = "./package.json";
     const pkg = JSON.parse((await fs_1.promises.readFile(packageFile)).toString());
+    core.exportVariable("NPM_PACKAGE_NAME", pkg.name);
     core.exportVariable("NPM_RELEASE_VERSION", pkg.version);
-    core.exportVariable("NPM_PACKAGE_NAME", pkg.version);
 }
 async function isDir(path) {
     return fs_1.promises.stat(path).then(s => s.isDirectory(), () => false);
@@ -723,6 +723,7 @@ async function run() {
     else {
         await exec_1.exec("npm publish");
     }
+    core.exportVariable("NPM_RELEASE_TAG", tag);
     await exportReleaseVersion();
 }
 run().catch(error => {
