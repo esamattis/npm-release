@@ -25,12 +25,24 @@ async function setPrereleaseVersion() {
     console.log("Prerelease version: " + pkg.version);
 }
 
+async function exportReleaseVersion() {
+    const packageFile = "./package.json";
+    const pkg = JSON.parse((await fs.readFile(packageFile)).toString());
+    core.exportVariable("NPM_RELEASE_VERSION", pkg.version);
+}
+
 async function isDir(path: string): Promise<boolean> {
-    return fs.stat(path).then(s => s.isDirectory(), () => false);
+    return fs.stat(path).then(
+        s => s.isDirectory(),
+        () => false,
+    );
 }
 
 async function isFile(path: string): Promise<boolean> {
-    return fs.stat(path).then(s => s.isFile(), () => false);
+    return fs.stat(path).then(
+        s => s.isFile(),
+        () => false,
+    );
 }
 
 async function run() {
@@ -86,6 +98,8 @@ async function run() {
     } else {
         await exec("npm publish");
     }
+
+    await exportReleaseVersion();
 }
 
 run().catch(error => {
