@@ -100,6 +100,7 @@ async function run() {
         await exec("npm publish");
     }
 
+    core.exportVariable("NPM_RELEASE_TAG", tag);
     await exportReleaseVersion();
 }
 
