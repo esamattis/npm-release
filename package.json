@@ -22,7 +22,7 @@
     "author": "Esa-Matti Suuronen",
     "license": "MIT",
     "dependencies": {
-        "@actions/core": "^1.1.1",
+        "@actions/core": "^1.2.6",
         "@actions/exec": "^1.0.1",
         "semver": "^6.3.0"
     },
