@@ -64,9 +64,9 @@ npx np --no-publish
 
 react-bemed
 
-- https://github.com/epeli/react-bemed/tree/master/.github/workflows
-- https://www.npmjs.com/package/react-bemed
-  - Checkout the "Versions" tab
+-   https://github.com/epeli/react-bemed/tree/master/.github/workflows
+-   https://www.npmjs.com/package/react-bemed
+    -   Checkout the "Versions" tab
 
 ## Running tests and building
 
