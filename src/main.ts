@@ -1,6 +1,5 @@
 import { promises as fs } from "fs";
 import PathUtils from "path";
-import semver from "semver";
 import * as core from "@actions/core";
 import { exec } from "@actions/exec";
 import { execSync } from "child_process";
@@ -16,10 +15,7 @@ async function setPrereleaseVersion() {
         process.exit(1);
     }
 
-    pkg.version = `${semver.inc(pkg.version, "patch")}-dev.${gitRev.slice(
-        0,
-        9,
-    )}`;
+    pkg.version = `${pkg.version}-dev.${gitRev.slice(0, 9)}`;
 
     await fs.writeFile(packageFile, JSON.stringify(pkg, null, "    "));
     console.log("Prerelease version: " + pkg.version);
