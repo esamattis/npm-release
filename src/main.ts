@@ -30,14 +30,14 @@ async function exportReleaseVersion() {
 
 async function isDir(path: string): Promise<boolean> {
     return fs.stat(path).then(
-        s => s.isDirectory(),
+        (s) => s.isDirectory(),
         () => false,
     );
 }
 
 async function isFile(path: string): Promise<boolean> {
     return fs.stat(path).then(
-        s => s.isFile(),
+        (s) => s.isFile(),
         () => false,
     );
 }
@@ -100,7 +100,7 @@ async function run() {
     await exportReleaseVersion();
 }
 
-run().catch(error => {
+run().catch((error) => {
     console.log("Action failed", error);
     core.setFailed(error.message);
 });
