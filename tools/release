@@ -6,7 +6,7 @@ npm run commit-build
 
 np --no-publish
 
-git tag v1 HEAD --force
+git tag v2 HEAD --force
 
-git push origin :v1
+git push origin :v2
 git push origin --tags
