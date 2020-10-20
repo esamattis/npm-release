@@ -43,7 +43,7 @@ jobs:
         steps:
             - uses: actions/checkout@v1
             - name: Make stable release to npm
-              uses: epeli/npm-release@v1
+              uses: esamatti/npm-release@v2
               with:
                   type: stable
                   token: ${{ secrets.NPM_TOKEN }}
